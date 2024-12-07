@@ -1,0 +1,128 @@
+#Linear regression 
+import pandas as pd
+import matplotlib.pyplot as plt
+import statistics as stats
+import numpy as np
+import scipy.stats as st
+import math
+# Region1=input("Enter region name: ")
+# Region2=input("Enter region name: ")
+df=pd.read_csv("total offences numbers of each year.csv")
+df1=df[df["Reporting region"]=="Darwin"]
+df2=df[df["Reporting region"]=="Alice Springs"]
+df3=df[df["Reporting region"]=="Palmerston"]
+df4=df[df["Reporting region"]=="Nhulunbuy"]
+df5=df[df["Reporting region"]=="Katherine"]
+df6=df[df["Reporting region"]=="Tennant Creek"]
+df7=df[df["Reporting region"]=="NT Balance"]
+	
+
+sample1=df1["crime numbers per ten thousand pp"].values
+sample2=df2["crime numbers per ten thousand pp"].values
+sample3=df3["crime numbers per ten thousand pp"].values
+sample4=df4["crime numbers per ten thousand pp"].values
+sample5=df5["crime numbers per ten thousand pp"].values
+sample6=df6["crime numbers per ten thousand pp"].values
+sample7=df7["crime numbers per ten thousand pp"].values
+	
+
+print("Darwin: \n",df[df["Reporting region"]=="Darwin"].describe())
+print("Alice Springs: \n",df[df["Reporting region"]=="Alice Springs"].describe())
+print("Palmerston: \n",df[df["Reporting region"]=="Palmerston"].describe())
+print("Nhulunbuy: \n",df[df["Reporting region"]=="Nhulunbuy"].describe())
+print("Katherine: \n",df[df["Reporting region"]=="Katherine"].describe())
+print("Tennant Creek: \n",df[df["Reporting region"]=="Tennant Creek"].describe())
+print("NT Balance: \n",df[df["Reporting region"]=="NT Balance"].describe())
+	
+
+x=[1,2,3,4,5,6,7,8,9,10]
+plt.plot(x,sample1,color="blue",label="Darwin")
+plt.plot(x,sample2,color="red",label="Alice Springs")
+plt.plot(x,sample3,color="pink",label="Palmerston")
+plt.plot(x,sample4,color="green",label="Nhulunbuy")
+plt.plot(x,sample5,color="black",label="Katherine")
+plt.plot(x,sample6,color="purple",label="Tennant Creek")
+plt.plot(x,sample7,color="yellow",label="NT Balance")
+	
+plt.title("Crime numbers per ten thousand pp")
+plt.xlabel("Year (2011-2020)")
+plt.ylabel("Number of offences")
+plt.legend()
+plt.show()
+#computing the descriptive and inferential statistics and histogram
+import pandas as pd
+import matplotlib.pyplot as plt
+import statistics as stats
+import numpy as np
+import scipy.stats as st
+import math
+Region=input("Enter region name: ")   #ask users to choose a region
+df=pd.read_csv("total offences numbers of each month.csv")
+df1=df[df["Reporting region"]==Region]
+sample1=df1["number of offences of each month"].values
+sample_volume=50
+#randomly sampling
+samplex=np.random.choice(sample1,sample_volume,replace=False)
+#descrbie population of region
+print("%s:\n"%Region,df1["number of offences of each month"].describe())
+	
+#describe sample
+print("Sample mean: %s"%np.mean(samplex))
+print("Sample median: %s"%np.median(samplex))
+print("Sample mode: %s"%stats.mode(samplex))
+print("Sample variance: %.2f"%np.array(samplex).var(ddof=1))
+print("Sample Std: %.2f"%np.array(samplex).std(ddof=1))
+print("IQR: %s"%(np.percentile(samplex,75)-np.percentile(samplex,25)))
+	
+
+import statsmodels.stats.weightstats as stm
+x_bar=np.mean(samplex)    #mean of sample
+std_err=np.std(samplex)/math.sqrt(sample_volume)    #standard error of error
+	
+#confidence interval of sample
+ci_low,ci_up=stm._zconfint_generic(x_bar,std_err,alpha=0.05,alternative="two-sided")
+print("Sample confidence interval: %.2f to %.2f"%(ci_low,ci_up))
+print("Mean of Population: %.2f"%np.mean(sample1))
+	
+#if the mean of population is in the sample confidence interval or not.
+	if np.mean(sample1)>ci_low and np.mean(sample1)<ci_up:
+	    print("Actual mean of population is in the confidence interval")
+	else:
+	    print("Actual mean of population is NOT in the confidence interval")
+	
+
+	plt.hist(samplex,color="blue",bins=50)
+	plt.title("Histogram of number of offences of %s"%Region)
+	plt.xlabel("Offence number")
+	plt.ylabel("Frequency of number of offences")
+	plt.show()
+
+# combine the single csv file into one file
+# sum the total number of offences of each month in Katherine and Nhulunbuy
+	import os
+	import glob 
+	import pandas as pd
+	import matplotlib as plt
+	import numpy as np
+	os.chdir("../tap the parth name of files")
+	extension = 'csv'
+	all_filenames = [i for i in glob.glob('*.{}'.format(extension))]
+	combined_csv = pd.concat([pd.read_csv(f) for f in all_filenames])
+	combined_csv.to_csv("combine_xlsx.csv",index= False)
+	
+
+	  
+	  
+	
+	  ###########read and write spicific data############
+	import os 
+	import pandas as pd
+	df = pd.read_csv('Users/lucasliu/Documents/data/nh_nt_crime_statistics_jul_2021.xlsx')
+	test = pd.DataFrame(df.groupby(by=[1,2,7])[9].sum()).reset_index()
+	test.columns = ['year','month','area','number']
+	with pd.ExcelWriter('/Users/lucasliu/Documents/data') as f:
+	test.query('area == "Katherine"').to_excel(f,sheet_name='target area',index=None)
+	test.query('area == "Nhulunbuy"').to_excel(f,sheet_name='target area',index=None)
+
+
+
